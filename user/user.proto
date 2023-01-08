@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package user;
+
+import "google/protobuf/timestamp.proto";
+option go_package = "github.com/sultanfariz/simple-grpc/user";
+
+service AuthService {
+  rpc RegisterUser(RegisterUserInput) returns (GenericResponse) {}
+  rpc VerifyEmail(VerifyEmailRequest) returns (GenericResponse) {}
+}
+
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  enum role {
+    USER = 0;
+    ADMIN = 1;
+  }
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+message GenericResponse {
+  string status = 1;
+  string message = 2;
+}
+
+message RegisterUserInput {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+  string passwordConfirm = 4;
+}
+
+message RegisterUserResponse { User user = 1; }
+
+message VerifyEmailRequest { string verificationCode = 1; }
