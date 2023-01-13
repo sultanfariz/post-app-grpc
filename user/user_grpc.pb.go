@@ -23,7 +23,6 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
 	RegisterUser(ctx context.Context, in *RegisterUserInput, opts ...grpc.CallOption) (*GenericResponse, error)
-	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*GenericResponse, error)
 }
 
 type authServiceClient struct {
@@ -43,21 +42,11 @@ func (c *authServiceClient) RegisterUser(ctx context.Context, in *RegisterUserIn
 	return out, nil
 }
 
-func (c *authServiceClient) VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*GenericResponse, error) {
-	out := new(GenericResponse)
-	err := c.cc.Invoke(ctx, "/user.AuthService/VerifyEmail", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
 type AuthServiceServer interface {
 	RegisterUser(context.Context, *RegisterUserInput) (*GenericResponse, error)
-	VerifyEmail(context.Context, *VerifyEmailRequest) (*GenericResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -67,9 +56,6 @@ type UnimplementedAuthServiceServer struct {
 
 func (UnimplementedAuthServiceServer) RegisterUser(context.Context, *RegisterUserInput) (*GenericResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterUser not implemented")
-}
-func (UnimplementedAuthServiceServer) VerifyEmail(context.Context, *VerifyEmailRequest) (*GenericResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method VerifyEmail not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -102,24 +88,6 @@ func _AuthService_RegisterUser_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_VerifyEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VerifyEmailRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthServiceServer).VerifyEmail(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/user.AuthService/VerifyEmail",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).VerifyEmail(ctx, req.(*VerifyEmailRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,10 +98,6 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterUser",
 			Handler:    _AuthService_RegisterUser_Handler,
-		},
-		{
-			MethodName: "VerifyEmail",
-			Handler:    _AuthService_VerifyEmail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

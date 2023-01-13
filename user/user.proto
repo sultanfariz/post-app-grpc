@@ -7,7 +7,6 @@ option go_package = "github.com/sultanfariz/simple-grpc/user";
 
 service AuthService {
   rpc RegisterUser(RegisterUserInput) returns (GenericResponse) {}
-  rpc VerifyEmail(VerifyEmailRequest) returns (GenericResponse) {}
 }
 
 message User {
@@ -35,5 +34,3 @@ message RegisterUserInput {
 }
 
 message RegisterUserResponse { User user = 1; }
-
-message VerifyEmailRequest { string verificationCode = 1; }
