@@ -3,6 +3,7 @@ package mysql
 import (
 	"fmt"
 
+	"github.com/sultanfariz/simple-grpc/repository/mysql/users"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -23,6 +24,8 @@ func InitDB() *gorm.DB {
 		panic(err)
 	}
 
-	DB.AutoMigrate()
+	DB.AutoMigrate(
+		&users.User{},
+	)
 	return DB
 }
