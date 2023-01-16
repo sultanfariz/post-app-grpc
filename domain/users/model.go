@@ -1,4 +1,4 @@
-package domain
+package users
 
 import (
 	"context"
@@ -15,22 +15,22 @@ type User struct {
 	UpdatedAt time.Time
 }
 
-type RegisterUserInput struct {
-	Id       int
-	Name     string
-	Email    string
-	Password string
-	Role     string
-}
+// type RegisterUserInput struct {
+// 	Id       int
+// 	Name     string
+// 	Email    string
+// 	Password string
+// 	Role     string
+// }
 
-type RegisterUserResponse struct {
-	User *User
-}
+// type RegisterUserResponse struct {
+// 	User *User
+// }
 
-type UsersRepository interface {
+type UsersRepositoryInterface interface {
 	Register(ctx context.Context, in *User) (*User, error)
 }
 
-type UsersUsecase interface {
+type UsersUsecaseInterface interface {
 	Register(ctx context.Context, in *User) (*User, error)
 }

@@ -7,21 +7,20 @@ import (
 	"net"
 	"time"
 
-	"github.com/sultanfariz/simple-grpc/domain"
-	"github.com/sultanfariz/simple-grpc/repository/mysql"
-	userRepository "github.com/sultanfariz/simple-grpc/repository/mysql/users"
-	userUsecase "github.com/sultanfariz/simple-grpc/usecases/users"
+	userDomain "github.com/sultanfariz/simple-grpc/domain/users"
+	"github.com/sultanfariz/simple-grpc/infrastructure/repository/mysql"
+	userRepository "github.com/sultanfariz/simple-grpc/infrastructure/repository/mysql/users"
 	user "github.com/sultanfariz/simple-grpc/user"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
 type UserServerGrpc struct {
-	userUsecase userUsecase.UsersUsecase
+	userUsecase userDomain.UsersUsecase
 	user.UnimplementedAuthServiceServer
 }
 
-func NewUserServerGrpc(gserver *grpc.Server, userUcase userUsecase.UsersUsecase) {
+func NewUserServerGrpc(gserver *grpc.Server, userUcase userDomain.UsersUsecase) {
 	userServer := &UserServerGrpc{
 		userUsecase: userUcase,
 	}
@@ -30,7 +29,7 @@ func NewUserServerGrpc(gserver *grpc.Server, userUcase userUsecase.UsersUsecase)
 }
 
 func (s *UserServerGrpc) RegisterUser(ctx context.Context, in *user.RegisterUserInput) (*user.GenericResponse, error) {
-	data := domain.User{
+	data := userDomain.User{
 		Name:     in.GetName(),
 		Email:    in.GetEmail(),
 		Password: in.GetPassword(),
@@ -58,7 +57,7 @@ func main() {
 
 	db := mysql.InitDB()
 	userRepo := userRepository.NewUsersRepository(db)
-	userUsecase := userUsecase.NewUsersUsecase(userRepo, timeoutContext)
+	userUsecase := userDomain.NewUsersUsecase(userRepo, timeoutContext)
 
 	
 	grpcServer := grpc.NewServer()

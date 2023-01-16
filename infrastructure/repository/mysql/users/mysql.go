@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	domain "github.com/sultanfariz/simple-grpc/domain"
+	model "github.com/sultanfariz/simple-grpc/domain/users"
 
 	"gorm.io/gorm"
 )
@@ -20,13 +20,13 @@ func NewUsersRepository(db *gorm.DB) *UsersRepository {
 	}
 }
 
-func (r *UsersRepository) Register(ctx context.Context, in *domain.User) (*domain.User, error) {
-	data := domain.User{}
+func (r *UsersRepository) Register(ctx context.Context, in *model.User) (*model.User, error) {
+	data := model.User{}
 	if err := r.DBConnection.Where("email = ?", in.Email).First(&data).Error; err == nil {
 		return nil, errors.New("email already registered")
 	}
 
-	user := domain.User{
+	user := model.User{
 		Name:     in.Name,
 		Email:    in.Email,
 		Password: in.Password,

@@ -3,7 +3,7 @@ package mysql
 import (
 	"fmt"
 
-	"github.com/sultanfariz/simple-grpc/repository/mysql/users"
+	"github.com/sultanfariz/simple-grpc/infrastructure/repository/mysql/users"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
