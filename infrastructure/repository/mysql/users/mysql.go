@@ -6,6 +6,7 @@ import (
 	"time"
 
 	model "github.com/sultanfariz/simple-grpc/domain/users"
+	"golang.org/x/crypto/bcrypt"
 
 	"gorm.io/gorm"
 )
@@ -30,7 +31,6 @@ func (r *UsersRepository) Register(ctx context.Context, in *model.User) (*model.
 		Name:     in.Name,
 		Email:    in.Email,
 		Password: in.Password,
-		Role:     in.Role,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
@@ -40,4 +40,17 @@ func (r *UsersRepository) Register(ctx context.Context, in *model.User) (*model.
 	}
 
 	return &user, nil
+}
+
+func (r *UsersRepository) Login(ctx context.Context, email string, password string) (*model.User, error) {
+	data := model.User{}
+	if err := r.DBConnection.Where("email = ?", email).First(&data).Error; err != nil {
+		return nil, errors.New("email or password is wrong")
+	}
+
+	if bcrypt.CompareHashAndPassword([]byte(data.Password), []byte(password)) != nil {
+		return nil, errors.New("email or password is wrong")
+	}
+
+	return &data, nil
 }
