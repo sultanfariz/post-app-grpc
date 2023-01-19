@@ -7,6 +7,7 @@ import (
 	"time"
 
 	userDomain "github.com/sultanfariz/simple-grpc/domain/users"
+	"github.com/sultanfariz/simple-grpc/infrastructure/commons"
 	"github.com/sultanfariz/simple-grpc/infrastructure/repository/mysql"
 	userRepository "github.com/sultanfariz/simple-grpc/infrastructure/repository/mysql/users"
 	grpcServerController "github.com/sultanfariz/simple-grpc/infrastructure/transport/grpc"
@@ -22,10 +23,14 @@ func main() {
 	}
 	fmt.Println("Server running on port :50001")
 
+	configJWT := commons.ConfigJWT{
+		SecretJWT:       "thisIs45ecretKey",
+		ExpiresDuration: 72,
+	}
+
 	db := mysql.InitDB()
 	userRepo := userRepository.NewUsersRepository(db)
-	userUsecase := userDomain.NewUsersUsecase(userRepo, timeoutContext)
-
+	userUsecase := userDomain.NewUsersUsecase(userRepo, timeoutContext, &configJWT)
 	
 	grpcServer := grpc.NewServer()
 	grpcServerController.NewUserServerGrpc(grpcServer, *userUsecase)
