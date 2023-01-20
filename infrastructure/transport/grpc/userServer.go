@@ -6,7 +6,6 @@ import (
 	userDomain "github.com/sultanfariz/simple-grpc/domain/users"
 	user "github.com/sultanfariz/simple-grpc/interface/grpc/user"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -21,7 +20,6 @@ func NewUserServerGrpc(gserver *grpc.Server, userUcase userDomain.UsersUsecase) 
 		userUsecase: userUcase,
 	}
 	user.RegisterAuthServiceServer(gserver, userServer)
-	reflection.Register(gserver)
 }
 
 func (s *UserServerGrpc) Register(ctx context.Context, in *user.RegisterRequest) (*user.RegisterResponse, error) {
