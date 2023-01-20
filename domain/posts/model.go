@@ -14,9 +14,9 @@ type Post struct {
 }
 
 type PostsRepositoryInterface interface {
-	GetAllPosts(ctx context.Context) ([]*Post, error)
-	GetPostById(ctx context.Context, id int) (*Post, error)
-	CreatePost(ctx context.Context, in *Post) (*Post, error)
+	GetAll(ctx context.Context) ([]*Post, error)
+	GetById(ctx context.Context, id int) (*Post, error)
+	Insert(ctx context.Context, in *Post) (*Post, error)
 }
 
 type PostsUsecaseInterface interface {
