@@ -16,7 +16,7 @@ type User struct {
 
 type UsersRepositoryInterface interface {
 	GetByEmail(ctx context.Context, email string) (*User, error)
-	GetByID(ctx context.Context, id int) (*User, error)
+	GetById(ctx context.Context, id int) (*User, error)
 	Insert(ctx context.Context, user *User) (*User, error)
 }
 

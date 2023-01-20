@@ -28,7 +28,7 @@ func (r *UsersRepository) GetByEmail(ctx context.Context, email string) (*model.
 	return &data, nil
 }
 
-func (r *UsersRepository) GetByID(ctx context.Context, id int) (*model.User, error) {
+func (r *UsersRepository) GetById(ctx context.Context, id int) (*model.User, error) {
 	data := model.User{}
 	if err := r.DBConnection.Where("id = ?", id).First(&data).Error; err != nil {
 		return nil, err
