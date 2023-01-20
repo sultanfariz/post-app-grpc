@@ -2,9 +2,9 @@ package users
 
 import (
 	"context"
-	"errors"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/sultanfariz/simple-grpc/infrastructure/commons"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -29,19 +29,31 @@ func (uu *UsersUsecase) Register(ctx context.Context, user *User) (*User, error)
 	ctx, cancel := context.WithTimeout(ctx, uu.ContextTimeout)
 	defer cancel()
 
-	if user.Name == "" {
-		return user, errors.New("name is required")
+	validator := validator.New()
+	if err := validator.Struct(user); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	if user.Email == "" || user.Password == "" {
-		return user, errors.New("invalid email or password")
+	if user.Name == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "name is required")
 	}
 
+	// hash password
 	hashed, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	user.Password = string(hashed)
 
-	user, err := uu.UsersRepository.Register(ctx, user)
+	// check if email already exists
+	data, err := uu.UsersRepository.GetByEmail(ctx, user.Email)
+	if err != nil && err.Error() != "record not found" {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	if data != nil {
+		return nil, status.Errorf(codes.AlreadyExists, "email already exists")
+	}
+
+	// insert user to db
+	user, err = uu.UsersRepository.Insert(ctx, user)
 	if err != nil {
-		return user, err
+		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	return user, nil
@@ -51,14 +63,29 @@ func (uu *UsersUsecase) Login(ctx context.Context, user *User) (string, error) {
 	ctx, cancel := context.WithTimeout(ctx, uu.ContextTimeout)
 	defer cancel()
 
-	if user.Email == "" || user.Password == "" {
+	validator := validator.New()
+	if err := validator.Struct(User{
+		Email:    user.Email,
+		Password: user.Password,
+	}); err != nil {
+		return "", status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	// check if user exists
+	data, err := uu.UsersRepository.GetByEmail(ctx, user.Email)
+	if err != nil && err.Error() != "record not found" {
+		return "", status.Errorf(codes.Internal, err.Error())
+	}
+	if data == nil {
+		return "", status.Errorf(codes.NotFound, "user not found")
+	}
+
+	// check if password is correct
+	if err := bcrypt.CompareHashAndPassword([]byte(data.Password), []byte(user.Password)); err != nil {
 		return "", status.Errorf(codes.InvalidArgument, "invalid email or password")
 	}
 
-	user, err := uu.UsersRepository.Login(ctx, user.Email, user.Password)
-	if err != nil {
-		return "", err
-	}
+	// generate token
 	token, err := uu.jwtConfig.GenerateToken(user.Id, user.Email)
 	if err != nil {
 		return "", status.Errorf(codes.Internal, err.Error())

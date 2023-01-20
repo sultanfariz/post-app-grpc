@@ -3,6 +3,7 @@ module github.com/sultanfariz/simple-grpc
 go 1.16
 
 require (
+	github.com/go-playground/validator/v10 v10.11.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	golang.org/x/crypto v0.5.0
 	google.golang.org/genproto v0.0.0-20221207170731-23e4bf6bdc37 // indirect
