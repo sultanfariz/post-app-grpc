@@ -6,7 +6,7 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/sultanfariz/simple-grpc/post";
 
 service PostService {
-  rpc GetAllPost(GetAllPostRequest) returns (GetAllPostResponse) {}
+  rpc GetAllPosts(GetAllPostsRequest) returns (GetAllPostsResponse) {}
   rpc GetPostById(GetPostByIdRequest) returns (GetPostByIdResponse) {}
   rpc CreatePost(CreatePostRequest) returns (CreatePostResponse) {}
 }
@@ -24,12 +24,12 @@ message GenericResponse {
   string message = 2;
 }
 
-message GetAllPostRequest {
+message GetAllPostsRequest {
   int32 page = 1;
   int32 limit = 2;
 }
 
-message GetAllPostResponse {
+message GetAllPostsResponse {
   GenericResponse meta = 1;
   repeated Post posts = 2;
 }
