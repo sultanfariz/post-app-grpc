@@ -6,6 +6,7 @@ import (
 	"net"
 	"time"
 
+	"github.com/spf13/viper"
 	postDomain "github.com/sultanfariz/simple-grpc/domain/posts"
 	userDomain "github.com/sultanfariz/simple-grpc/domain/users"
 	"github.com/sultanfariz/simple-grpc/infrastructure/commons"
@@ -17,18 +18,28 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
+func init() {
+	viper.SetConfigFile(".env")
+	if err := viper.ReadInConfig(); err != nil {
+		panic(err)
+	}
+	if viper.GetBool("debug") {
+		log.Println("Service RUN on DEBUG mode")
+	}
+}
+
 func main() {
-	lis, err := net.Listen("tcp", ":50001")
-	timeoutContext := time.Duration(10 * time.Second)
+	lis, err := net.Listen("tcp", ":"+viper.GetString("SERVER_PORT"))
+	timeoutContext := time.Duration(viper.GetInt("CONTEXT_TIMEOUT")) * time.Second
 
 	if err != nil {
 		log.Fatalf("failed listen: %v", err)
 	}
-	fmt.Println("Server running on port :50001")
+	fmt.Println("Server running on port " + viper.GetString("SERVER_PORT"))
 
 	configJWT := commons.ConfigJWT{
-		SecretJWT:       "thisIs45ecretKey",
-		ExpiresDuration: 72,
+		SecretJWT:       viper.GetString("JWT_SECRET_KEY"),
+		ExpiresDuration: viper.GetInt("JWT_EXPIRES_DURATION"),
 	}
 
 	db := mysql.InitDB()
@@ -36,7 +47,7 @@ func main() {
 	userUsecase := userDomain.NewUsersUsecase(userRepo, timeoutContext, &configJWT)
 	postRepo := postsRepository.NewPostsRepository(db)
 	postUsecase := postDomain.NewPostsUsecase(postRepo, timeoutContext)
-	
+
 	serverOpts := []grpc.ServerOption{
 		grpc.UnaryInterceptor(grpcServerController.JWTInterceptor),
 	}
