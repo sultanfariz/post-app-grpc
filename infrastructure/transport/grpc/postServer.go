@@ -9,7 +9,6 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-
 type PostServerGrpc struct {
 	postUsecase postDomain.PostsUsecase
 	post.UnimplementedPostServiceServer
@@ -41,16 +40,37 @@ func (s *PostServerGrpc) GetAllPosts(ctx context.Context, in *post.GetAllPostsRe
 
 	return &post.GetAllPostsResponse{
 		Meta: &post.GenericResponse{
-			Status: "success",
+			Status:  "success",
 			Message: "Successfully get all posts",
 		},
 		Posts: posts,
 	}, nil
 }
 
+func (s *PostServerGrpc) GetPostById(ctx context.Context, in *post.GetPostByIdRequest) (*post.GetPostByIdResponse, error) {
+	postData, err := s.postUsecase.GetPostById(ctx, int(in.GetId()))
+	if err != nil {
+		return nil, err
+	}
+
+	return &post.GetPostByIdResponse{
+		Meta: &post.GenericResponse{
+			Status:  "success",
+			Message: "Successfully get post by id",
+		},
+		Post: &post.Post{
+			Id:        int32(postData.Id),
+			Title:     postData.Title,
+			Content:   postData.Content,
+			CreatedAt: timestamppb.New(postData.CreatedAt),
+			UpdatedAt: timestamppb.New(postData.UpdatedAt),
+		},
+	}, nil
+}
+
 func (s *PostServerGrpc) CreatePost(ctx context.Context, in *post.CreatePostRequest) (*post.CreatePostResponse, error) {
 	data := postDomain.Post{
-		Title:  in.GetTitle(),
+		Title:   in.GetTitle(),
 		Content: in.GetContent(),
 	}
 
@@ -61,7 +81,7 @@ func (s *PostServerGrpc) CreatePost(ctx context.Context, in *post.CreatePostRequ
 
 	return &post.CreatePostResponse{
 		Meta: &post.GenericResponse{
-			Status: "success",
+			Status:  "success",
 			Message: "Post created successfully",
 		},
 		Post: &post.Post{
