@@ -46,7 +46,7 @@ func main() {
 	userRepo := userRepository.NewUsersRepository(db)
 	userUsecase := userDomain.NewUsersUsecase(userRepo, timeoutContext, &configJWT)
 	postRepo := postsRepository.NewPostsRepository(db)
-	postUsecase := postDomain.NewPostsUsecase(postRepo, timeoutContext)
+	postUsecase := postDomain.NewPostsUsecase(postRepo, userRepo, timeoutContext)
 
 	serverOpts := []grpc.ServerOption{
 		grpc.UnaryInterceptor(grpcServerController.JWTInterceptor),

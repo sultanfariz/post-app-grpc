@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/golang-jwt/jwt"
@@ -11,16 +12,6 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
-
-// func init() {
-// 	viper.SetConfigFile(".env")
-// 	if err := viper.ReadInConfig(); err != nil {
-// 		panic(err)
-// 	}
-// 	if viper.GetBool("debug") {
-// 		log.Println("Service RUN on DEBUG mode")
-// 	}
-// }
 
 var (
 	JWT_METADATA_KEY = "authorization"
@@ -62,6 +53,21 @@ func JWTInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServer
 	if err != nil || !parsedToken.Valid {
 		return nil, status.Errorf(codes.Unauthenticated, "invalid token")
 	}
+
+	// get email from token
+	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+	fmt.Printf("Authenticated user with email: %s\n", claims)
+	if !ok {
+		return nil, status.Errorf(codes.Unauthenticated, "invalid token")
+	}
+	email, ok := claims["sub"].(string)
+	fmt.Printf("Authenticated user with email: %s\n", email)
+	if !ok {
+		return nil, status.Errorf(codes.Unauthenticated, "invalid token")
+	}
+
+	// add email to context
+	ctx = context.WithValue(ctx, "email", email)
 
 	return handler(ctx, req)
 }
