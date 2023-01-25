@@ -37,7 +37,7 @@ func (s *UserServerGrpc) Register(ctx context.Context, in *user.RegisterRequest)
 	return &user.RegisterResponse{
 		Meta: &user.GenericResponse{
 			Status: "success",
-			Message: "User berhasil didaftarkan",
+			Message: "User created successfully",
 		},
 		User: &user.User{
 			Id:        int32(userData.Id),
@@ -63,7 +63,7 @@ func (s *UserServerGrpc) Login(ctx context.Context, in *user.LoginRequest) (*use
 	return &user.LoginResponse{
 		Meta: &user.GenericResponse{
 			Status: "success",
-			Message: "Login berhasil",
+			Message: "Login success",
 		},
 		Token: token,
 	}, nil

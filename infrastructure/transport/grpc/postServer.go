@@ -42,7 +42,7 @@ func (s *PostServerGrpc) GetAllPosts(ctx context.Context, in *post.GetAllPostsRe
 	return &post.GetAllPostsResponse{
 		Meta: &post.GenericResponse{
 			Status: "success",
-			Message: "Berhasil mendapatkan data",
+			Message: "Successfully get all posts",
 		},
 		Posts: posts,
 	}, nil
@@ -62,7 +62,7 @@ func (s *PostServerGrpc) CreatePost(ctx context.Context, in *post.CreatePostRequ
 	return &post.CreatePostResponse{
 		Meta: &post.GenericResponse{
 			Status: "success",
-			Message: "Post berhasil didaftarkan",
+			Message: "Post created successfully",
 		},
 		Post: &post.Post{
 			Id:        int32(postData.Id),

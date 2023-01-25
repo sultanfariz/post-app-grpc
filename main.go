@@ -6,12 +6,15 @@ import (
 	"net"
 	"time"
 
+	postDomain "github.com/sultanfariz/simple-grpc/domain/posts"
 	userDomain "github.com/sultanfariz/simple-grpc/domain/users"
 	"github.com/sultanfariz/simple-grpc/infrastructure/commons"
 	"github.com/sultanfariz/simple-grpc/infrastructure/repository/mysql"
+	postsRepository "github.com/sultanfariz/simple-grpc/infrastructure/repository/mysql/posts"
 	userRepository "github.com/sultanfariz/simple-grpc/infrastructure/repository/mysql/users"
 	grpcServerController "github.com/sultanfariz/simple-grpc/infrastructure/transport/grpc"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 func main() {
@@ -31,9 +34,17 @@ func main() {
 	db := mysql.InitDB()
 	userRepo := userRepository.NewUsersRepository(db)
 	userUsecase := userDomain.NewUsersUsecase(userRepo, timeoutContext, &configJWT)
+	postRepo := postsRepository.NewPostsRepository(db)
+	postUsecase := postDomain.NewPostsUsecase(postRepo, timeoutContext)
 	
-	grpcServer := grpc.NewServer()
+	serverOpts := []grpc.ServerOption{
+		grpc.UnaryInterceptor(grpcServerController.JWTInterceptor),
+	}
+	grpcServer := grpc.NewServer(serverOpts...)
+
 	grpcServerController.NewUserServerGrpc(grpcServer, *userUsecase)
+	grpcServerController.NewPostServerGrpc(grpcServer, *postUsecase)
+	reflection.Register(grpcServer)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
