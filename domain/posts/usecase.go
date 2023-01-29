@@ -76,3 +76,38 @@ func (pu *PostsUsecase) CreatePost(ctx context.Context, post *Post) (*Post, erro
 
 	return result, nil
 }
+
+func (pu *PostsUsecase) DeletePost(ctx context.Context, id int) error {
+	ctx, cancel := context.WithTimeout(ctx, pu.ContextTimeout)
+	defer cancel()
+
+	post, err := pu.PostsRepository.GetById(ctx, id)
+	if err != nil {
+		return err
+	}
+	if post == nil {
+		return status.Errorf(codes.NotFound, "post not found")
+	}
+
+	// check if user is the owner of the post
+	userEmail, ok := ctx.Value("email").(string)
+	if userEmail == "" || !ok {
+		return status.Errorf(codes.Unauthenticated, "user not found")
+	}
+
+	user, err := pu.UsersRepository.GetByEmail(ctx, userEmail)
+	if user == nil || err != nil {
+		return status.Errorf(codes.Unauthenticated, "user not found")
+	}
+
+	if post.UserId != user.Id {
+		return status.Errorf(codes.PermissionDenied, "you are not the owner of this post")
+	}
+
+	err = pu.PostsRepository.Delete(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

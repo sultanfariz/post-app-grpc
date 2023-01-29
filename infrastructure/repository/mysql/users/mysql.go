@@ -47,11 +47,3 @@ func (r *UsersRepository) Insert(ctx context.Context, user *model.User) (*model.
 
 	return user, nil
 }
-
-func (r *UsersRepository) Delete(ctx context.Context, id int) error {
-	if err := r.DBConnection.Where("id = ?", id).Delete(&model.User{}).Error; err != nil {
-		return err
-	}
-
-	return nil
-}

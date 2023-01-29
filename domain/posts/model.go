@@ -25,4 +25,5 @@ type PostsUsecaseInterface interface {
 	GetAllPosts(ctx context.Context) ([]*Post, error)
 	GetPostById(ctx context.Context, id int) (*Post, error)
 	CreatePost(ctx context.Context, in *Post) (*Post, error)
+	DeletePost(ctx context.Context, id int) error
 }

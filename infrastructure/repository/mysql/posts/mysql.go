@@ -47,3 +47,11 @@ func (r *PostsRepository) Insert(ctx context.Context, post *model.Post) (*model.
 
 	return post, nil
 }
+
+func (r *PostsRepository) Delete(ctx context.Context, id int) error {
+	if err := r.DBConnection.Where("id = ?", id).Delete(&model.Post{}).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
