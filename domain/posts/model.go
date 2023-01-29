@@ -18,6 +18,7 @@ type PostsRepositoryInterface interface {
 	GetAll(ctx context.Context) ([]*Post, error)
 	GetById(ctx context.Context, id int) (*Post, error)
 	Insert(ctx context.Context, in *Post) (*Post, error)
+	Delete(ctx context.Context, id int) error
 }
 
 type PostsUsecaseInterface interface {
