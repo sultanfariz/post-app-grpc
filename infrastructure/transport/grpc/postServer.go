@@ -93,3 +93,17 @@ func (s *PostServerGrpc) CreatePost(ctx context.Context, in *post.CreatePostRequ
 		},
 	}, nil
 }
+
+func (s *PostServerGrpc) DeletePost(ctx context.Context, in *post.DeletePostRequest) (*post.DeletePostResponse, error) {
+	err := s.postUsecase.DeletePost(ctx, int(in.GetId()))
+	if err != nil {
+		return nil, err
+	}
+
+	return &post.DeletePostResponse{
+		Meta: &post.GenericResponse{
+			Status:  "success",
+			Message: "Post deleted successfully",
+		},
+	}, nil
+}

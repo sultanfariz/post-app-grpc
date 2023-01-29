@@ -23,6 +23,7 @@ var jwtMethodsAuth = map[string]bool{
 	"/post.PostService/GetPosts":    false,
 	"/post.PostService/GetPostById": false,
 	"/post.PostService/CreatePost":  true,
+	"/post.PostService/DeletePost":  true,
 }
 
 func JWTInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
