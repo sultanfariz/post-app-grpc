@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package post;
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+option go_package = "github.com/sultanfariz/simple-grpc/client/post";
+
+service PostService {
+  rpc GetAllPosts(GetAllPostsRequest) returns (GetAllPostsResponse) {
+    option (google.api.http) = {
+      get: "/v1/posts"
+    };
+  }
+  rpc GetPostById(GetPostByIdRequest) returns (GetPostByIdResponse) {
+    option (google.api.http) = {
+      get: "/v1/posts/{id}"
+    };
+  }
+}
+
+message Post {
+  int32 id = 1;
+  string title = 2;
+  string content = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+message GenericResponse {
+  string status = 1;
+  string message = 2;
+}
+
+message GetAllPostsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message GetAllPostsResponse {
+  GenericResponse meta = 1;
+  repeated Post posts = 2;
+}
+
+message GetPostByIdRequest {
+  int32 id = 1;
+}
+
+message GetPostByIdResponse {
+  GenericResponse meta = 1;
+  Post post = 2;
+}
