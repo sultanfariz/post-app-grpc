@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package post;
+package post_client;
 
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 option go_package = "github.com/sultanfariz/simple-grpc/client/post";
 
-service PostService {
+service PostClientService {
   rpc GetAllPosts(GetAllPostsRequest) returns (GetAllPostsResponse) {
     option (google.api.http) = {
       get: "/v1/posts"

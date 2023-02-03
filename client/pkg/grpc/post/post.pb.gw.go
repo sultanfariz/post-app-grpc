@@ -32,17 +32,17 @@ var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
 var (
-	filter_PostService_GetAllPosts_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	filter_PostClientService_GetAllPosts_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
-func request_PostService_GetAllPosts_0(ctx context.Context, marshaler runtime.Marshaler, client PostServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_PostClientService_GetAllPosts_0(ctx context.Context, marshaler runtime.Marshaler, client PostClientServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetAllPostsRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_PostService_GetAllPosts_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_PostClientService_GetAllPosts_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -51,14 +51,14 @@ func request_PostService_GetAllPosts_0(ctx context.Context, marshaler runtime.Ma
 
 }
 
-func local_request_PostService_GetAllPosts_0(ctx context.Context, marshaler runtime.Marshaler, server PostServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_PostClientService_GetAllPosts_0(ctx context.Context, marshaler runtime.Marshaler, server PostClientServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetAllPostsRequest
 	var metadata runtime.ServerMetadata
 
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_PostService_GetAllPosts_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_PostClientService_GetAllPosts_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -67,7 +67,7 @@ func local_request_PostService_GetAllPosts_0(ctx context.Context, marshaler runt
 
 }
 
-func request_PostService_GetPostById_0(ctx context.Context, marshaler runtime.Marshaler, client PostServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_PostClientService_GetPostById_0(ctx context.Context, marshaler runtime.Marshaler, client PostClientServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetPostByIdRequest
 	var metadata runtime.ServerMetadata
 
@@ -93,7 +93,7 @@ func request_PostService_GetPostById_0(ctx context.Context, marshaler runtime.Ma
 
 }
 
-func local_request_PostService_GetPostById_0(ctx context.Context, marshaler runtime.Marshaler, server PostServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_PostClientService_GetPostById_0(ctx context.Context, marshaler runtime.Marshaler, server PostClientServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetPostByIdRequest
 	var metadata runtime.ServerMetadata
 
@@ -119,13 +119,13 @@ func local_request_PostService_GetPostById_0(ctx context.Context, marshaler runt
 
 }
 
-// RegisterPostServiceHandlerServer registers the http handlers for service PostService to "mux".
-// UnaryRPC     :call PostServiceServer directly.
+// RegisterPostClientServiceHandlerServer registers the http handlers for service PostClientService to "mux".
+// UnaryRPC     :call PostClientServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
-// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterPostServiceHandlerFromEndpoint instead.
-func RegisterPostServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server PostServiceServer) error {
+// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterPostClientServiceHandlerFromEndpoint instead.
+func RegisterPostClientServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server PostClientServiceServer) error {
 
-	mux.Handle("GET", pattern_PostService_GetAllPosts_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_PostClientService_GetAllPosts_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -133,12 +133,12 @@ func RegisterPostServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/post.PostService/GetAllPosts", runtime.WithHTTPPathPattern("/v1/posts"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/post_client.PostClientService/GetAllPosts", runtime.WithHTTPPathPattern("/v1/posts"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_PostService_GetAllPosts_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_PostClientService_GetAllPosts_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -146,11 +146,11 @@ func RegisterPostServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 			return
 		}
 
-		forward_PostService_GetAllPosts_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PostClientService_GetAllPosts_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_PostService_GetPostById_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_PostClientService_GetPostById_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -158,12 +158,12 @@ func RegisterPostServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/post.PostService/GetPostById", runtime.WithHTTPPathPattern("/v1/posts/{id}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/post_client.PostClientService/GetPostById", runtime.WithHTTPPathPattern("/v1/posts/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_PostService_GetPostById_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_PostClientService_GetPostById_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -171,16 +171,16 @@ func RegisterPostServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 			return
 		}
 
-		forward_PostService_GetPostById_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PostClientService_GetPostById_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
 	return nil
 }
 
-// RegisterPostServiceHandlerFromEndpoint is same as RegisterPostServiceHandler but
+// RegisterPostClientServiceHandlerFromEndpoint is same as RegisterPostClientServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterPostServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+func RegisterPostClientServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
 	conn, err := grpc.Dial(endpoint, opts...)
 	if err != nil {
 		return err
@@ -200,63 +200,63 @@ func RegisterPostServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.Se
 		}()
 	}()
 
-	return RegisterPostServiceHandler(ctx, mux, conn)
+	return RegisterPostClientServiceHandler(ctx, mux, conn)
 }
 
-// RegisterPostServiceHandler registers the http handlers for service PostService to "mux".
+// RegisterPostClientServiceHandler registers the http handlers for service PostClientService to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterPostServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterPostServiceHandlerClient(ctx, mux, NewPostServiceClient(conn))
+func RegisterPostClientServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterPostClientServiceHandlerClient(ctx, mux, NewPostClientServiceClient(conn))
 }
 
-// RegisterPostServiceHandlerClient registers the http handlers for service PostService
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "PostServiceClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "PostServiceClient"
+// RegisterPostClientServiceHandlerClient registers the http handlers for service PostClientService
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "PostClientServiceClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "PostClientServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "PostServiceClient" to call the correct interceptors.
-func RegisterPostServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client PostServiceClient) error {
+// "PostClientServiceClient" to call the correct interceptors.
+func RegisterPostClientServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client PostClientServiceClient) error {
 
-	mux.Handle("GET", pattern_PostService_GetAllPosts_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_PostClientService_GetAllPosts_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/post.PostService/GetAllPosts", runtime.WithHTTPPathPattern("/v1/posts"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/post_client.PostClientService/GetAllPosts", runtime.WithHTTPPathPattern("/v1/posts"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_PostService_GetAllPosts_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_PostClientService_GetAllPosts_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_PostService_GetAllPosts_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PostClientService_GetAllPosts_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_PostService_GetPostById_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_PostClientService_GetPostById_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/post.PostService/GetPostById", runtime.WithHTTPPathPattern("/v1/posts/{id}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/post_client.PostClientService/GetPostById", runtime.WithHTTPPathPattern("/v1/posts/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_PostService_GetPostById_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_PostClientService_GetPostById_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_PostService_GetPostById_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PostClientService_GetPostById_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -264,13 +264,13 @@ func RegisterPostServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 }
 
 var (
-	pattern_PostService_GetAllPosts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "posts"}, ""))
+	pattern_PostClientService_GetAllPosts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "posts"}, ""))
 
-	pattern_PostService_GetPostById_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "posts", "id"}, ""))
+	pattern_PostClientService_GetPostById_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "posts", "id"}, ""))
 )
 
 var (
-	forward_PostService_GetAllPosts_0 = runtime.ForwardResponseMessage
+	forward_PostClientService_GetAllPosts_0 = runtime.ForwardResponseMessage
 
-	forward_PostService_GetPostById_0 = runtime.ForwardResponseMessage
+	forward_PostClientService_GetPostById_0 = runtime.ForwardResponseMessage
 )
