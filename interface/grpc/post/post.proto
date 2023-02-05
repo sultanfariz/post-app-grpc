@@ -16,8 +16,9 @@ message Post {
   int32 id = 1;
   string title = 2;
   string content = 3;
-  google.protobuf.Timestamp created_at = 4;
-  google.protobuf.Timestamp updated_at = 5;
+  string topic = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
 }
 
 message GenericResponse {
@@ -47,6 +48,7 @@ message GetPostByIdResponse {
 message CreatePostRequest {
   string title = 1;
   string content = 2;
+  string topic = 3;
 }
 
 message CreatePostResponse {
