@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 
 	postDomain "github.com/sultanfariz/simple-grpc/domain/posts"
 	post "github.com/sultanfariz/simple-grpc/interface/grpc/post"
@@ -29,14 +30,17 @@ func (s *PostServerGrpc) GetAllPosts(ctx context.Context, in *post.GetAllPostsRe
 
 	var posts []*post.Post
 	for _, data := range postData {
+		fmt.Printf("\ndata: %+v\n", data.CreatedAt)
 		posts = append(posts, &post.Post{
 			Id:        int32(data.Id),
 			Title:     data.Title,
 			Content:   data.Content,
+			Topic:     data.Topic,
 			CreatedAt: timestamppb.New(data.CreatedAt),
 			UpdatedAt: timestamppb.New(data.UpdatedAt),
 		})
 	}
+	fmt.Printf("data: %+v\n", posts[0].CreatedAt)
 
 	return &post.GetAllPostsResponse{
 		Meta: &post.GenericResponse{
@@ -62,6 +66,7 @@ func (s *PostServerGrpc) GetPostById(ctx context.Context, in *post.GetPostByIdRe
 			Id:        int32(postData.Id),
 			Title:     postData.Title,
 			Content:   postData.Content,
+			Topic:     postData.Topic,
 			CreatedAt: timestamppb.New(postData.CreatedAt),
 			UpdatedAt: timestamppb.New(postData.UpdatedAt),
 		},
@@ -72,6 +77,7 @@ func (s *PostServerGrpc) CreatePost(ctx context.Context, in *post.CreatePostRequ
 	data := postDomain.Post{
 		Title:   in.GetTitle(),
 		Content: in.GetContent(),
+		Topic:   in.GetTopic(),
 	}
 
 	postData, err := s.postUsecase.CreatePost(ctx, &data)
@@ -88,6 +94,7 @@ func (s *PostServerGrpc) CreatePost(ctx context.Context, in *post.CreatePostRequ
 			Id:        int32(postData.Id),
 			Title:     postData.Title,
 			Content:   postData.Content,
+			Topic:     postData.Topic,
 			CreatedAt: timestamppb.New(postData.CreatedAt),
 			UpdatedAt: timestamppb.New(postData.UpdatedAt),
 		},

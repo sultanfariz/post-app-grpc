@@ -2,6 +2,7 @@ package posts
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -29,6 +30,7 @@ func (pu *PostsUsecase) GetAllPosts(ctx context.Context) ([]*Post, error) {
 	defer cancel()
 
 	posts, err := pu.PostsRepository.GetAll(ctx)
+	fmt.Printf("posts: %+v", posts[0])
 	if err != nil {
 		return posts, err
 	}

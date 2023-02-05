@@ -7,8 +7,9 @@ import (
 
 type Post struct {
 	Id        int
-	Title     string `validate:"required,min=3,max=128"`
+	Title     string `validate:"required,min=3,max=256"`
 	Content   string `validate:"required,min=16"`
+	Topic     string `validate:"required,min=3,max=128"`
 	UserId    int
 	CreatedAt time.Time
 	UpdatedAt time.Time
