@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type PostClientServiceClient interface {
 	GetAllPosts(ctx context.Context, in *GetAllPostsRequest, opts ...grpc.CallOption) (*GetAllPostsResponse, error)
 	GetPostById(ctx context.Context, in *GetPostByIdRequest, opts ...grpc.CallOption) (*GetPostByIdResponse, error)
+	SubscribePostByTopic(ctx context.Context, in *SubscribePostByTopicRequest, opts ...grpc.CallOption) (PostClientService_SubscribePostByTopicClient, error)
 }
 
 type postClientServiceClient struct {
@@ -48,12 +49,45 @@ func (c *postClientServiceClient) GetPostById(ctx context.Context, in *GetPostBy
 	return out, nil
 }
 
+func (c *postClientServiceClient) SubscribePostByTopic(ctx context.Context, in *SubscribePostByTopicRequest, opts ...grpc.CallOption) (PostClientService_SubscribePostByTopicClient, error) {
+	stream, err := c.cc.NewStream(ctx, &PostClientService_ServiceDesc.Streams[0], "/post_client.PostClientService/SubscribePostByTopic", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &postClientServiceSubscribePostByTopicClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type PostClientService_SubscribePostByTopicClient interface {
+	Recv() (*SubscribePostByTopicResponse, error)
+	grpc.ClientStream
+}
+
+type postClientServiceSubscribePostByTopicClient struct {
+	grpc.ClientStream
+}
+
+func (x *postClientServiceSubscribePostByTopicClient) Recv() (*SubscribePostByTopicResponse, error) {
+	m := new(SubscribePostByTopicResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // PostClientServiceServer is the server API for PostClientService service.
 // All implementations should embed UnimplementedPostClientServiceServer
 // for forward compatibility
 type PostClientServiceServer interface {
 	GetAllPosts(context.Context, *GetAllPostsRequest) (*GetAllPostsResponse, error)
 	GetPostById(context.Context, *GetPostByIdRequest) (*GetPostByIdResponse, error)
+	SubscribePostByTopic(*SubscribePostByTopicRequest, PostClientService_SubscribePostByTopicServer) error
 }
 
 // UnimplementedPostClientServiceServer should be embedded to have forward compatible implementations.
@@ -65,6 +99,9 @@ func (UnimplementedPostClientServiceServer) GetAllPosts(context.Context, *GetAll
 }
 func (UnimplementedPostClientServiceServer) GetPostById(context.Context, *GetPostByIdRequest) (*GetPostByIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPostById not implemented")
+}
+func (UnimplementedPostClientServiceServer) SubscribePostByTopic(*SubscribePostByTopicRequest, PostClientService_SubscribePostByTopicServer) error {
+	return status.Errorf(codes.Unimplemented, "method SubscribePostByTopic not implemented")
 }
 
 // UnsafePostClientServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -114,6 +151,27 @@ func _PostClientService_GetPostById_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostClientService_SubscribePostByTopic_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SubscribePostByTopicRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PostClientServiceServer).SubscribePostByTopic(m, &postClientServiceSubscribePostByTopicServer{stream})
+}
+
+type PostClientService_SubscribePostByTopicServer interface {
+	Send(*SubscribePostByTopicResponse) error
+	grpc.ServerStream
+}
+
+type postClientServiceSubscribePostByTopicServer struct {
+	grpc.ServerStream
+}
+
+func (x *postClientServiceSubscribePostByTopicServer) Send(m *SubscribePostByTopicResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // PostClientService_ServiceDesc is the grpc.ServiceDesc for PostClientService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,6 +188,12 @@ var PostClientService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PostClientService_GetPostById_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "SubscribePostByTopic",
+			Handler:       _PostClientService_SubscribePostByTopic_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "post/post.proto",
 }

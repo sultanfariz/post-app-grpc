@@ -17,14 +17,20 @@ service PostClientService {
       get: "/v1/posts/{id}"
     };
   }
+  rpc SubscribePostByTopic(SubscribePostByTopicRequest) returns (stream SubscribePostByTopicResponse) {
+    option (google.api.http) = {
+      get: "/v1/posts/{topic}/subscribe"
+    };
+  }
 }
 
 message Post {
   int32 id = 1;
   string title = 2;
   string content = 3;
-  google.protobuf.Timestamp created_at = 4;
-  google.protobuf.Timestamp updated_at = 5;
+  string topic = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
 }
 
 message GenericResponse {
@@ -47,6 +53,15 @@ message GetPostByIdRequest {
 }
 
 message GetPostByIdResponse {
+  GenericResponse meta = 1;
+  Post post = 2;
+}
+
+message SubscribePostByTopicRequest {
+  string topic = 1;
+}
+
+message SubscribePostByTopicResponse {
   GenericResponse meta = 1;
   Post post = 2;
 }

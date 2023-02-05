@@ -18,10 +18,7 @@ func NewPostClient(postClient post.PostServiceClient) *PostClient {
 }
 
 func (p PostClient) GetAllPosts(ctx context.Context) ([]*post.Post, error) {
-	posts, err := p.postClient.GetAllPosts(ctx, &post.GetAllPostsRequest{
-		Page:  1,
-		Limit: 10,
-	})
+	posts, err := p.postClient.GetAllPosts(ctx, &post.GetAllPostsRequest{})
 	if err != nil {
 		return nil, err
 	}
