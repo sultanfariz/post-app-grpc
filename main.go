@@ -14,6 +14,7 @@ import (
 	postsRepository "github.com/sultanfariz/simple-grpc/infrastructure/repository/mysql/posts"
 	userRepository "github.com/sultanfariz/simple-grpc/infrastructure/repository/mysql/users"
 	grpcServerController "github.com/sultanfariz/simple-grpc/infrastructure/transport/grpc"
+	rabbitmq "github.com/wagslane/go-rabbitmq"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -42,12 +43,42 @@ func main() {
 		ExpiresDuration: viper.GetInt("JWT_EXPIRES_DURATION"),
 	}
 
+	// rabbitmq connection
+	conn, err := rabbitmq.NewConn(
+		"amqp://guest:guest@localhost",
+		rabbitmq.WithConnectionOptionsLogging,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close()
+
+	publisher, err := rabbitmq.NewPublisher(
+		conn,
+		rabbitmq.WithPublisherOptionsLogging,
+		rabbitmq.WithPublisherOptionsExchangeName("events"),
+		rabbitmq.WithPublisherOptionsExchangeDeclare,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer publisher.Close()
+
+	publisher.NotifyReturn(func(r rabbitmq.Return) {
+		log.Printf("message returned from server: %s", string(r.Body))
+	})
+
+	publisher.NotifyPublish(func(c rabbitmq.Confirmation) {
+		log.Printf("message confirmed from server. tag: %v, ack: %v", c.DeliveryTag, c.Ack)
+	})
+
 	db := mysql.InitDB()
 	userRepo := userRepository.NewUsersRepository(db)
 	userUsecase := userDomain.NewUsersUsecase(userRepo, timeoutContext, &configJWT)
 	postRepo := postsRepository.NewPostsRepository(db)
-	postUsecase := postDomain.NewPostsUsecase(postRepo, userRepo, timeoutContext)
+	postUsecase := postDomain.NewPostsUsecase(postRepo, userRepo, timeoutContext, publisher)
 
+	// grpc server
 	serverOpts := []grpc.ServerOption{
 		grpc.UnaryInterceptor(grpcServerController.JWTInterceptor),
 	}
