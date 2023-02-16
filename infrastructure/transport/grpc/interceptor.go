@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/golang-jwt/jwt"
@@ -57,12 +56,10 @@ func JWTInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServer
 
 	// get email from token
 	claims, ok := parsedToken.Claims.(jwt.MapClaims)
-	fmt.Printf("Authenticated user with email: %s\n", claims)
 	if !ok {
 		return nil, status.Errorf(codes.Unauthenticated, "invalid token")
 	}
 	email, ok := claims["sub"].(string)
-	fmt.Printf("Authenticated user with email: %s\n", email)
 	if !ok {
 		return nil, status.Errorf(codes.Unauthenticated, "invalid token")
 	}

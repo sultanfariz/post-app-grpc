@@ -2,11 +2,13 @@ package posts
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
+	"log"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/sultanfariz/simple-grpc/domain/users"
+	rabbitmq "github.com/wagslane/go-rabbitmq"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -15,13 +17,15 @@ type PostsUsecase struct {
 	PostsRepository PostsRepositoryInterface
 	UsersRepository users.UsersRepositoryInterface
 	ContextTimeout  time.Duration
+	Publisher       *rabbitmq.Publisher
 }
 
-func NewPostsUsecase(pr PostsRepositoryInterface, ur users.UsersRepositoryInterface, timeout time.Duration) *PostsUsecase {
+func NewPostsUsecase(pr PostsRepositoryInterface, ur users.UsersRepositoryInterface, timeout time.Duration, publisher *rabbitmq.Publisher) *PostsUsecase {
 	return &PostsUsecase{
 		PostsRepository: pr,
 		UsersRepository: ur,
 		ContextTimeout:  timeout,
+		Publisher:       publisher,
 	}
 }
 
@@ -30,7 +34,6 @@ func (pu *PostsUsecase) GetAllPosts(ctx context.Context) ([]*Post, error) {
 	defer cancel()
 
 	posts, err := pu.PostsRepository.GetAll(ctx)
-	fmt.Printf("posts: %+v", posts[0])
 	if err != nil {
 		return posts, err
 	}
@@ -74,6 +77,23 @@ func (pu *PostsUsecase) CreatePost(ctx context.Context, post *Post) (*Post, erro
 	result, err := pu.PostsRepository.Insert(ctx, post)
 	if err != nil {
 		return post, err
+	}
+
+	// convert post data to []byte
+	data, err := json.Marshal(post)
+	if err != nil {
+		return post, err
+	}
+
+	// publish to rabbitmq
+	err = pu.Publisher.Publish(
+		data,
+		[]string{"grpc_queue"},
+		rabbitmq.WithPublishOptionsContentType("application/json"),
+		rabbitmq.WithPublishOptionsExchange("events"),
+	)
+	if err != nil {
+		log.Println(err)
 	}
 
 	return result, nil

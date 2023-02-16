@@ -2,7 +2,6 @@ package posts
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	model "github.com/sultanfariz/simple-grpc/domain/posts"
@@ -25,8 +24,6 @@ func (r *PostsRepository) GetAll(ctx context.Context) ([]*model.Post, error) {
 	if err := r.DBConnection.Find(&data).Error; err != nil {
 		return nil, err
 	}
-	fmt.Printf("data: %+v\n", data[0])
-	fmt.Printf("data: %+v\n", data[0].CreatedAt)
 
 	return data, nil
 }

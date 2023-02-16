@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 
 	postDomain "github.com/sultanfariz/simple-grpc/domain/posts"
 	post "github.com/sultanfariz/simple-grpc/interface/grpc/post"
@@ -30,7 +29,6 @@ func (s *PostServerGrpc) GetAllPosts(ctx context.Context, in *post.GetAllPostsRe
 
 	var posts []*post.Post
 	for _, data := range postData {
-		fmt.Printf("\ndata: %+v\n", data.CreatedAt)
 		posts = append(posts, &post.Post{
 			Id:        int32(data.Id),
 			Title:     data.Title,
@@ -40,7 +38,6 @@ func (s *PostServerGrpc) GetAllPosts(ctx context.Context, in *post.GetAllPostsRe
 			UpdatedAt: timestamppb.New(data.UpdatedAt),
 		})
 	}
-	fmt.Printf("data: %+v\n", posts[0].CreatedAt)
 
 	return &post.GetAllPostsResponse{
 		Meta: &post.GenericResponse{
