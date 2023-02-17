@@ -78,6 +78,9 @@ func (p PostHandler) GetPostById(ctx context.Context, in *postPB.GetPostByIdRequ
 }
 
 func (p PostHandler) SubscribePostByTopic(in *postPB.SubscribePostByTopicRequest, stream postPB.PostClientService_SubscribePostByTopicServer) error {
+	topic := in.GetTopic()
+
+	// create consumer
 	consumer, err := rabbitmq.NewConsumer(
 		p.conn,
 		func(d rabbitmq.Delivery) rabbitmq.Action {
@@ -133,8 +136,8 @@ func (p PostHandler) SubscribePostByTopic(in *postPB.SubscribePostByTopicRequest
 			}
 			return rabbitmq.Ack
 		},
-		"grpc:queue",
-		rabbitmq.WithConsumerOptionsRoutingKey("grpc:queue"),
+		"grpc:"+topic,
+		rabbitmq.WithConsumerOptionsRoutingKey("grpc:"+topic),
 		rabbitmq.WithConsumerOptionsExchangeName("events"),
 		rabbitmq.WithConsumerOptionsExchangeDeclare,
 	)

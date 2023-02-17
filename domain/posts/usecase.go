@@ -88,7 +88,7 @@ func (pu *PostsUsecase) CreatePost(ctx context.Context, post *Post) (*Post, erro
 	// publish to rabbitmq
 	err = pu.Publisher.Publish(
 		data,
-		[]string{"grpc:queue"},
+		[]string{"grpc:" + post.Topic},
 		rabbitmq.WithPublishOptionsContentType("application/json"),
 		rabbitmq.WithPublishOptionsExchange("events"),
 	)
