@@ -17,11 +17,7 @@ service PostClientService {
       get: "/v1/posts/{id}"
     };
   }
-  rpc SubscribePostByTopic(SubscribePostByTopicRequest) returns (stream SubscribePostByTopicResponse) {
-    option (google.api.http) = {
-      get: "/v1/posts/{topic}/subscribe"
-    };
-  }
+  rpc SubscribePostByTopic(SubscribePostByTopicRequest) returns (stream SubscribePostByTopicResponse) {}
 }
 
 message Post {
