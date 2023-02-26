@@ -29,9 +29,8 @@ The client component of the app is a gRPC client that also serves a RESTful API 
 - SubscribePostByTopic. SubscribePostByTopic works as a server-stream and sends new posts by the requested topic from the message broker.
 
 The client app is implemented using buf as the compiler.
-System Design Diagram
-System Design Diagram
 Note: The client app does not provide any authentication functionality.
+![System Design Diagram](./assets/simple%20grpc%20system%20design.png)
 
 ## Usage
 Clone the repository.
